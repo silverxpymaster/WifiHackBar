@@ -66,12 +66,11 @@ This tool is intended **strictly for educational and ethical penetration testing
 Cybersecurity Researcher | Ethical Hacker
 
 🔗 [YouTube](https://youtube.com/@silverxcyber)
+
 📷 [Instagram](https://instagram.com/silverxcyb4r)
+
 📢 [Telegram](https://t.me/silverxvip)
+
 ✍️ [Medium Blog](https://medium.com/@silverxcyber)
 
----
-
 > ⭐ If you find this project useful, consider subscribing to the YouTube channel and following on social platforms for more tools and tutorials!
-
-```
