@@ -21,6 +21,8 @@ From scanning nearby networks to executing deauthentication attacks, WIfihackbar
 - 🖥️ **Web-Based Interface**  
   Fully web-accessible dashboard for ease of use — no terminal commands required for operation.
 
+  [![Image](https://i.hizliresim.com/qb5535o.png)](https://hizliresim.com/qb5535o)
+
 ---
 
 ## 🧪 Installation & Setup
