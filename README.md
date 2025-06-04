@@ -1,4 +1,4 @@
-# Wifihackbar - Wifi Hacking Tool
+# WifiHackBar - Wifi Hacking Tool
 
 **WIfihackbar** is a powerful Python-Flask-based WiFi hacking toolkit with a user-friendly web interface. Designed for cybersecurity professionals, ethical hackers, and penetration testers,
 this tool provides an all-in-one solution for WiFi network auditing and exploitation
@@ -26,13 +26,13 @@ From scanning nearby networks to executing deauthentication attacks, WIfihackbar
 ## 🧪 Installation & Setup
 
 1. **Download the necessary dependencies**  
-   ```bash
+```
    bash downloads.sh
-````
+```
 
 2. **Install Flask framework**
 
-   ```bash
+   ```
    pip3 install flask
    ```
 
