@@ -56,6 +56,12 @@ http://127.0.0.1:5000
 
 ---
 
+## YouTube Tutorial
+
+[![YouTube Video Thumbnail](https://img.youtube.com/vi/CyoS_PxDxf8/0.jpg)](https://www.youtube.com/watch?v=CyoS_PxDxf8)
+
+Click photo and watch youtube tutorial
+
 ## ⚠️ Disclaimer
 
 This tool is intended **strictly for educational and ethical penetration testing purposes only**. Unauthorized use against networks you do not own or have explicit permission to test is **illegal and unethical**. The developer is not responsible for any misuse or damages caused by this software.
