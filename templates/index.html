@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WifiHackBar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background-color: #0f0f0f;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            padding: 20px;
+            border: 4px solid #00ff00;
+            border-radius: 10px;
+            background-color: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                border-color: #00ff00;
+                box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            }
+
+            to {
+                border-color: #00b000;
+                box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+            }
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #00ffff;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #00ff00;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 0.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #00ffff;
+        }
+
+        select,
+        input,
+        textarea,
+        button {
+            font-family: 'Press Start 2P', monospace;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background-color: #0f0f0f;
+            color: #00ff00;
+            font-size: 0.8rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus,
+        button:focus {
+            outline: none;
+            border-color: #00b000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #00ff00;
+            color: #000000;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background-color: #00b000;
+            color: #ffffff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+        }
+
+        button:disabled {
+            background-color: #0f0f0f;
+            color: #666666;
+            border-color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #monitor-status,
+        #scan-status,
+        #deauth-status,
+        #fake-ap-status {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background-color: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out, pulse 2s infinite alternate;
+        }
+
+        .success {
+            color: #00ff00;
+        }
+
+        .error {
+            color: #ff0000;
+        }
+
+        .info {
+            color: #00ffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #00ff00;
+        }
+
+        th {
+            background-color: rgba(0, 255, 0, 0.1);
+            color: #00ffff;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: rgba(0, 255, 0, 0.05);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+
+        .deauth-select-button {
+            padding: 0.3rem 0.5rem;
+            background-color: #00ff00;
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .deauth-select-button:hover {
+            background-color: #00b000;
+            color: #ffffff;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #00ff00;
+            width: 1rem;
+            height: 1rem;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #stop-monitor-section,
+        #scan-networks-section,
+        #deauth-attack-section,
+        #fake-ap-section {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .btn-start {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-stop {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .status-box {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .status-box.loading {
+            background-color: #fffde7;
+            color: #333;
+        }
+
+        .status-box.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-box.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .status-box.running {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .ap-list {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .ap-list ul {
+            padding-left: 20px;
+            list-style-type: none;
+        }
+
+        .ap-list li {
+            padding: 3px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="title">WifiHackBar</h1>
+
+        <section id="monitor-control">
+            <h2>Monitor Mode Control</h2>
+            <label for="network-interface">Select Network Interface:</label>
+            <select id="network-interface">
+                {% for interface in interfaces %}
+                <option value="{{ interface }}">{{ interface }}</option>
+                {% endfor %}
+            </select>
+            <button id="start-monitor">Start Monitor Mode</button>
+            <div id="monitor-status" class="status"></div>
+            <div id="stop-monitor-section">
+                <button id="stop-monitor">Stop Monitor Mode</button>
+            </div>
+        </section>
+
+        <section id="scan-networks-section">
+            <h2>Scan Networks</h2>
+            <button id="scan-networks-button">Scan for Networks</button>
+            <div id="networks-list"></div>
+        </section>
+
+        <section id="deauth-attack-section">
+            <h2>Deauth Attack</h2>
+            <label for="deauth-bssid">Target BSSID:</label>
+            <input type="text" id="deauth-bssid" placeholder="Enter BSSID">
+            <label for="deauth-channel">Target Channel (optional):</label>
+            <input type="number" id="deauth-channel" placeholder="Enter Channel (leave empty for auto)">
+            <label for="deauth-target-mac">Target MAC (optional, default: broadcast):</label>
+            <input type="text" id="deauth-target-mac" placeholder="Enter Target MAC (optional)">
+            <label for="deauth-packets">Number of Packets (optional, default: 100):</label>
+            <input type="number" id="deauth-packets" value="100" placeholder="Enter Number of Packets">
+            <button id="start-deauth">Start Deauth Attack</button>
+            <div id="deauth-status" class="status"></div>
+        </section>
+
+        <section id="fake-ap-section">
+            <h2>Fake Access Points Control</h2>
+            <label for="fake-ap-names">AP Names (one per line):</label>
+            <textarea id="fake-ap-names" placeholder="FreeWiFi\nCoffeeShopWiFi\nAirport_WiFi"></textarea>
+
+            <div class="button-group">
+                <button id="start-fake-ap" class="btn-start">Start Fake APs</button>
+                <button id="stop-fake-ap" class="btn-stop" disabled>Stop Fake APs</button>
+            </div>
+
+            <div id="fake-ap-status" class="status-box"></div>
+            <div id="fake-ap-list" class="ap-list"></div>
+        </section>
+    </div>
+    <script>
+        $(document).ready(function () {
+            let monitorInterface = null;
+            let fakeApCheckInterval;
+
+            $('#start-monitor').on('click', function () {
+                var interface = $('#network-interface').val();
+                $('#monitor-status').html('<div class="spinner"></div> Starting monitor mode...');
+                $.post('/start_monitor', { interface: interface }, function (data) {
+                    if (data.success) {
+                        $('#monitor-status').html('<span class="success">' + data.message + '</span>');
+                        $('#stop-monitor-section').show();
+                        $('#scan-networks-section').show();
+                        $('#deauth-attack-section').show();
+                        $('#fake-ap-section').show();
+                        monitorInterface = data.message.split(' ').pop();
+                        $('#start-monitor').prop('disabled', true);
+                    } else {
+                        $('#monitor-status').html('<span class="error">' + data.error + '</span>');
+                    }
+                });
+            });
+
+            $('#stop-monitor').on('click', function () {
+                $('#monitor-status').html('<div class="spinner"></div> Stopping monitor mode...');
+                $.get('/stop_monitor', { monitor_interface: monitorInterface }, function (data) {
+                    if (data.success) {
+                        $('#monitor-status').html('<span class="success">' + data.message + '</span>');
+                        $('#stop-monitor-section').hide();
+                        $('#scan-networks-section').hide();
+                        $('#deauth-attack-section').hide();
+                        $('#fake-ap-section').hide();
+                        monitorInterface = null;
+                        $('#start-monitor').prop('disabled', false);
+                    } else {
+                        $('#monitor-status').html('<span class="error">' + data.error + '</span>');
+                    }
+                });
+            });
+
+            $('#scan-networks-button').on('click', function () {
+                $('#networks-list').html('<div class="spinner"></div> Scanning for networks...');
+
+                $.get('/scan_networks', { monitor_interface: monitorInterface }, function (data) {
+                    if (data.success) {
+                        if (data.networks && data.networks.length > 0) {
+                            var html =
+                                '<div style="overflow-x: auto;">' +
+                                '<table style="font-size: 0.7rem;">' +
+                                '<thead>' +
+                                '<tr>' +
+                                '<th>BSSID</th>' +
+                                '<th>Channel</th>' +
+                                '<th>Power</th>' +
+                                '<th>Encryption</th>' +
+                                '<th>ESSID</th>' +
+                                '<th>Clients</th>' +
+                                '<th>Actions</th>' +
+                                '</tr>' +
+                                '</thead>' +
+                                '<tbody>';
+
+                            $.each(data.networks, function (i, network) {
+                                var clientsHtml = '';
+                                if (network.clients && network.clients.length > 0) {
+                                    clientsHtml = '<ul style="margin: 0; padding-left: 1rem;">';
+                                    $.each(network.clients, function (j, client) {
+                                        clientsHtml += '<li>' + client + '</li>';
+                                    });
+                                    clientsHtml += '</ul>';
+                                } else {
+                                    clientsHtml = 'No clients';
+                                }
+
+                                html +=
+                                    '<tr>' +
+                                    '<td>' + network.bssid + '</td>' +
+                                    '<td>' + network.power + '</td>' +
+                                    '<td>' + network.channel + '</td>' +
+                                    '<td>' + network.encryption + '</td>' +
+                                    '<td>' + network.essid + '</td>' +
+                                    '<td>' + clientsHtml + '</td>' +
+                                    '<td>' +
+                                    '<button class="deauth-select-button" data-bssid="' + network.bssid + '">' +
+                                    'Select for Deauth' +
+                                    '</button>' +
+                                    '</td>' +
+                                    '</tr>';
+                            });
+
+                            html += '</tbody></table></div>';
+                            $('#networks-list').html(html);
+
+                            $('.deauth-select-button').on('click', function () {
+                                var bssid = $(this).data('bssid');
+                                $('#deauth-bssid').val(bssid);
+                            });
+
+                        } else {
+                            $('#networks-list').html('<span class="info">No networks found.</span>');
+                        }
+                    } else {
+                        $('#networks-list').html('<span class="error">' + (data.error || 'Scan failed') + '</span>');
+                    }
+                }).fail(function () {
+                    $('#networks-list').html('<span class="error">Failed to scan networks</span>');
+                });
+            });
+
+            $('#start-deauth').on('click', function () {
+                var bssid = $('#deauth-bssid').val();
+                var target_mac = $('#deauth-target-mac').val();
+                var packets = $('#deauth-packets').val();
+                var channel = $('#deauth-channel').val();
+
+                if (!bssid || !bssid.match(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/i)) {
+                    $('#deauth-status').html('<span class="error">Invalid BSSID format</span>');
+                    return;
+                }
+
+                $('#deauth-status').html('<div class="spinner"></div> Preparing deauth attack...');
+                $('#start-deauth').prop('disabled', true);
+
+                if (channel) {
+                    performDeauth(bssid, target_mac, packets, channel);
+                } else {
+                    $.post('/get_ap_channel', { bssid: bssid }, function (channelData) {
+                        if (!channelData.success) {
+                            $('#deauth-status').html('<span class="error">Channel detection failed: ' +
+                                (channelData.error || 'Unknown error') + '</span>');
+                            $('#start-deauth').prop('disabled', false);
+                            return;
+                        }
+                        performDeauth(bssid, target_mac, packets, channelData.channel);
+                    }).fail(function () {
+                        $('#deauth-status').html('<span class="error">Channel check failed</span>');
+                        $('#start-deauth').prop('disabled', false);
+                    });
+                }
+            });
+
+            function performDeauth(bssid, target_mac, packets, channel) {
+                $('#deauth-status').html('<div class="spinner"></div> Sending deauth packets on channel ' +
+                    (channel || 'unknown') + '...');
+
+                $.post('/deauth_attack', {
+                    bssid: bssid,
+                    target_mac: target_mac || 'ff:ff:ff:ff:ff:ff',
+                    packets: packets,
+                    channel: channel || ''
+                }, function (data) {
+                    if (data.success) {
+                        $('#deauth-status').html('<span class="success">' + data.message + '</span>');
+                    } else {
+                        $('#deauth-status').html('<span class="error">' + data.error + '</span>');
+                    }
+                    $('#start-deauth').prop('disabled', false);
+                }).fail(function () {
+                    $('#deauth-status').html('<span class="error">Request failed</span>');
+                    $('#start-deauth').prop('disabled', false);
+                });
+            }
+
+            $('#networks-list').on('click', '.deauth-select-button', function () {
+                var row = $(this).closest('tr');
+                var bssid = $(this).data('bssid');
+                var channel = row.find('td:nth-child(3)').text().trim();
+
+                $('#deauth-bssid').val(bssid);
+                $('#deauth-channel').val(channel);
+            });
+
+            function checkFakeApStatus() {
+                $.get('/fake_ap_status')
+                    .done(function (response) {
+                        if (response.success) {
+                            if (response.running) {
+                                $('#stop-fake-ap').prop('disabled', false);
+                                $('#start-fake-ap').prop('disabled', true);
+
+                                let statusText = 'Fake APs are running';
+                                if (response.processes.length > 0) {
+                                    statusText += '<br>' + response.processes.join('<br>');
+                                }
+                                showFakeApStatus(statusText, 'running');
+                            } else {
+                                $('#stop-fake-ap').prop('disabled', true);
+                                $('#start-fake-ap').prop('disabled', false);
+                            }
+                        }
+                    });
+            }
+
+            function showFakeApStatus(message, type) {
+                const statusBox = $('#fake-ap-status');
+                statusBox.removeClass('loading success error running');
+
+                if (type) statusBox.addClass(type);
+                statusBox.html(message);
+            }
+
+            function updateApList(apList) {
+                const listHtml = apList.map(ap => `<li>${ap}</li>`).join('');
+                $('#fake-ap-list').html(`<h3>Active APs:</h3><ul>${listHtml}</ul>`);
+            }
+
+            fakeApCheckInterval = setInterval(checkFakeApStatus, 3000);
+            checkFakeApStatus();
+
+            $('#start-fake-ap').on('click', function () {
+                const apNames = $('#fake-ap-names').val().trim();
+                if (!apNames) {
+                    showFakeApStatus('Please enter AP names', 'error');
+                    return;
+                }
+
+                showFakeApStatus('Starting fake APs...', 'loading');
+                $('#start-fake-ap, #stop-fake-ap').prop('disabled', true);
+
+                $.post('/start_fake_ap', { ap_names: apNames })
+                    .done(function (response) {
+                        if (response.success) {
+                            updateApList(response.ap_list);
+                            showFakeApStatus(response.message, 'success');
+                        } else {
+                            showFakeApStatus(response.error, 'error');
+                        }
+                    })
+                    .fail(function () {
+                        showFakeApStatus('Failed to start fake APs', 'error');
+                    })
+                    .always(function () {
+                        checkFakeApStatus();
+                    });
+            });
+
+            $('#stop-fake-ap').on('click', function () {
+                showFakeApStatus('Stopping fake APs...', 'loading');
+                $('#start-fake-ap, #stop-fake-ap').prop('disabled', true);
+
+                $.get('/stop_fake_ap')
+                    .done(function (response) {
+                        if (response.success) {
+                            showFakeApStatus(response.message, 'success');
+                            $('#fake-ap-list').empty();
+                        } else {
+                            showFakeApStatus(response.error, 'error');
+                        }
+                    })
+                    .fail(function () {
+                        showFakeApStatus('Failed to stop fake APs', 'error');
+                    })
+                    .always(function () {
+                        checkFakeApStatus();
+                    });
+            });
+
+            $('#stop-monitor-section').hide();
+            $('#scan-networks-section').hide();
+            $('#deauth-attack-section').hide();
+            $('#fake-ap-section').hide();
+        });
+    </script>
+</body>
+
+</html>
