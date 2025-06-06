@@ -302,4 +302,3 @@ def run_fake_ap(monitor_interface, ap_list_file):
     if error:
         return False, error
     return True, None
-
