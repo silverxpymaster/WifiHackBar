@@ -297,10 +297,41 @@
         .ap-list li {
             padding: 3px 0;
         }
+
+        .author-section {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #00ffff;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .author-section a {
+            color: #00ff00;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .author-section a:hover {
+            color: #00b000;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+        }
     </style>
 </head>
 
 <body>
+    <div class="author-section">
+        <h3>Author - SilverXCyber</h3>
+        <a href="https://t.me/silverxvip" target="_blank">Telegram Channel</a><br><br>
+        <a href="https://youtube.com/@silverxcyber" target="_blank">YouTube Channel</a>
+    </div>
     <div class="container">
         <h1 class="title">WifiHackBar</h1>
 
@@ -342,7 +373,7 @@
         <section id="fake-ap-section">
             <h2>Fake Access Points Control</h2>
             <label for="fake-ap-names">AP Names (one per line):</label>
-            <textarea id="fake-ap-names" placeholder="FreeWiFi\nCoffeeShopWiFi\nAirport_WiFi"></textarea>
+            <textarea id="fake-ap-names" placeholder="FreeWiFi1\nFreeWifi2\nFreewifi3"></textarea>
 
             <div class="button-group">
                 <button id="start-fake-ap" class="btn-start">Start Fake APs</button>
@@ -359,16 +390,16 @@
             let fakeApCheckInterval;
 
             $('#start-monitor').on('click', function () {
-                var interface = $('#network-interface').val();
+                var interfaceSelected = $('#network-interface').val();
                 $('#monitor-status').html('<div class="spinner"></div> Starting monitor mode...');
-                $.post('/start_monitor', { interface: interface }, function (data) {
+                $.post('/start_monitor', { interface: interfaceSelected }, function (data) {
                     if (data.success) {
                         $('#monitor-status').html('<span class="success">' + data.message + '</span>');
                         $('#stop-monitor-section').show();
                         $('#scan-networks-section').show();
                         $('#deauth-attack-section').show();
                         $('#fake-ap-section').show();
-                        monitorInterface = data.message.split(' ').pop();
+                        monitorInterface = data.monitor_interface || data.message.split(' ').pop();
                         $('#start-monitor').prop('disabled', true);
                     } else {
                         $('#monitor-status').html('<span class="error">' + data.error + '</span>');
@@ -394,6 +425,10 @@
             });
 
             $('#scan-networks-button').on('click', function () {
+                if (!monitorInterface) {
+                    $('#networks-list').html('<span class="error">Please start monitor mode first.</span>');
+                    return;
+                }
                 $('#networks-list').html('<div class="spinner"></div> Scanning for networks...');
 
                 $.get('/scan_networks', { monitor_interface: monitorInterface }, function (data) {
@@ -463,6 +498,11 @@
             });
 
             $('#start-deauth').on('click', function () {
+                if (!monitorInterface) {
+                    $('#deauth-status').html('<span class="error">Please start monitor mode first.</span>');
+                    return;
+                }
+
                 var bssid = $('#deauth-bssid').val();
                 var target_mac = $('#deauth-target-mac').val();
                 var packets = $('#deauth-packets').val();
@@ -499,6 +539,7 @@
                     (channel || 'unknown') + '...');
 
                 $.post('/deauth_attack', {
+                    monitor_interface: monitorInterface,
                     bssid: bssid,
                     target_mac: target_mac || 'ff:ff:ff:ff:ff:ff',
                     packets: packets,
@@ -563,6 +604,10 @@
             checkFakeApStatus();
 
             $('#start-fake-ap').on('click', function () {
+                if (!monitorInterface) {
+                    showFakeApStatus('Please start monitor mode first.', 'error');
+                    return;
+                }
                 const apNames = $('#fake-ap-names').val().trim();
                 if (!apNames) {
                     showFakeApStatus('Please enter AP names', 'error');
@@ -572,7 +617,7 @@
                 showFakeApStatus('Starting fake APs...', 'loading');
                 $('#start-fake-ap, #stop-fake-ap').prop('disabled', true);
 
-                $.post('/start_fake_ap', { ap_names: apNames })
+                $.post('/start_fake_ap', { monitor_interface: monitorInterface, ap_names: apNames })
                     .done(function (response) {
                         if (response.success) {
                             updateApList(response.ap_list);
@@ -610,10 +655,18 @@
                     });
             });
 
-            $('#stop-monitor-section').hide();
-            $('#scan-networks-section').hide();
-            $('#deauth-attack-section').hide();
-            $('#fake-ap-section').hide();
+            if (!monitorInterface) {
+                $('#stop-monitor-section').hide();
+                $('#scan-networks-section').hide();
+                $('#deauth-attack-section').hide();
+                $('#fake-ap-section').hide();
+            } else {
+                $('#stop-monitor-section').show();
+                $('#scan-networks-section').show();
+                $('#deauth-attack-section').show();
+                $('#fake-ap-section').show();
+                $('#start-monitor').prop('disabled', true);
+            }
         });
     </script>
 </body>
