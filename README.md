@@ -75,8 +75,6 @@ Cybersecurity Researcher | Ethical Hacker
 
 🔗 [YouTube](https://youtube.com/@silverxcyber)
 
-📷 [Instagram](https://instagram.com/silverxcyb4r)
-
 📢 [Telegram](https://t.me/silverxvip)
 
 ✍️ [Medium Blog](https://medium.com/@silverxcyber)
