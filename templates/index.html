@@ -360,11 +360,11 @@
             <h2>Deauth Attack</h2>
             <label for="deauth-bssid">Target BSSID:</label>
             <input type="text" id="deauth-bssid" placeholder="Enter BSSID">
-            <label for="deauth-channel">Target Channel (optional):</label>
+            <label for="deauth-channel">Target Channel :</label>
             <input type="number" id="deauth-channel" placeholder="Enter Channel (leave empty for auto)">
-            <label for="deauth-target-mac">Target MAC (optional, default: broadcast):</label>
+            <label for="deauth-target-mac">Target MAC Adress:</label>
             <input type="text" id="deauth-target-mac" placeholder="Enter Target MAC (optional)">
-            <label for="deauth-packets">Number of Packets (optional, default: 100):</label>
+            <label for="deauth-packets">Number of Packets :</label>
             <input type="number" id="deauth-packets" value="100" placeholder="Enter Number of Packets">
             <button id="start-deauth">Start Deauth Attack</button>
             <div id="deauth-status" class="status"></div>
@@ -372,8 +372,8 @@
 
         <section id="fake-ap-section">
             <h2>Fake Access Points Control</h2>
-            <label for="fake-ap-names">AP Names (one per line):</label>
-            <textarea id="fake-ap-names" placeholder="FreeWiFi1\nFreeWifi2\nFreewifi3"></textarea>
+            <label for="fake-ap-names">AP Names (One name per line):</label>
+            <textarea id="fake-ap-names" placeholder="FreeWiFi1"></textarea>
 
             <div class="button-group">
                 <button id="start-fake-ap" class="btn-start">Start Fake APs</button>
