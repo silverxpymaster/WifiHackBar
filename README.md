@@ -4,6 +4,8 @@
 this tool provides an all-in-one solution for WiFi network auditing and exploitation
 From scanning nearby networks to executing deauthentication attacks, WIfihackbar brings advanced wireless testing capabilities to your browser
 
+**You can motivate me by giving Tool a star⭐**
+
 ## 🌐 Features
 
 - 🚀 **Automatic Monitor Mode Switching**  
